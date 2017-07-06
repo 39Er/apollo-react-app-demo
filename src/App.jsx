@@ -2,19 +2,8 @@ import React, { Component } from 'react';
 import { ApolloClient, gql, graphql, ApolloProvider, createNetworkInterface } from 'react-apollo';
 import logo from './logo.svg';
 import './App.css';
+import GainPetFormWithForm from './gainPet';
 
-/**fetch('http://localhost:3001/graphql', {
-  method: 'POST',
-  mode: 'cors',
-  body: '{"query":"query{hello}"}',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-}).then((response) => {
-  return response.json();
-}).then((data) => {
-  console.log(data);
-});*/
 const client = new ApolloClient({
   networkInterface: createNetworkInterface({
     uri: 'http://localhost:3001/graphql',
@@ -22,8 +11,8 @@ const client = new ApolloClient({
 });
 
 const ownerQuery = gql`
-  query {
-    owner(id:"594cbb37c7f8585918139b97") {
+  query Query($id:String!){
+    owner(id:$id) {
       id
       username
       pets
@@ -38,7 +27,7 @@ const OwnerForm = ({ data: { loading, error, owner } }) => {
     return <p>{error.message}</p>;
   }
   return (<div>
-    <p>aaa</p>
+    <p>{owner.id}</p>
     <p>{owner.username}</p>
     <ul>
       {owner.pets.map(pet => <li key={pet}>{pet}</li>)}
@@ -46,7 +35,9 @@ const OwnerForm = ({ data: { loading, error, owner } }) => {
   </div>);
 };
 
-const OwnerFormWithData = graphql(ownerQuery)(OwnerForm);
+const OwnerFormWithData = graphql(ownerQuery, {
+  options: ({ id }) => ({ variables: { id } }),
+})(OwnerForm);
 
 class App extends Component {
   render() {
@@ -57,7 +48,8 @@ class App extends Component {
             <img src={logo} className="App-logo" alt="logo" />
             <h2>Welcome to React</h2>
           </div>
-          <OwnerFormWithData />
+          <OwnerFormWithData id={'594cbb37c7f8585918139b97'} />
+          <GainPetFormWithForm />
         </div>
       </ApolloProvider>
     );
