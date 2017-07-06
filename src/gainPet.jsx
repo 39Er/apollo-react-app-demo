@@ -20,7 +20,7 @@ const GainPetForm = (props) => {
     let age = document.getElementById('age').value;
     let color = document.getElementById('color').value;
     let owner = document.getElementById('owner').value;
-    props.mutate({
+    props.gainPetMutation({
       variables: {
         name: name,
         age: age,
@@ -50,6 +50,14 @@ const GainPetForm = (props) => {
   );
 };
 
-const GainPetFormWithData = graphql(gainPetMutation)(GainPetForm);
+/*
+if multiple mutations,it likes:
+  const ComponentWithMutations =
+    graphql(submitNewUser, { name: 'newUserMutation' })(
+      graphql(submitRepository, { name: 'newRepositoryMutation' })(Component)
+    );
+要给每个mutation的option的name一个值，防止都试图调用mutate
+*/
+const GainPetFormWithData = graphql(gainPetMutation, { name: 'gainPetMutation' })(GainPetForm);
 
 export default GainPetFormWithData;
